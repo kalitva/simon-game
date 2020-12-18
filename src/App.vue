@@ -2,59 +2,101 @@
   <h1>Simon Says</h1>
   <div class=game>
     <div class="game-board">
-      <div ref="blueCorner" class="corner blue-corner" @click="highlightCorner"></div>
-      <div ref="redCorner" class="corner red-corner" @click="highlightCorner"></div>
-      <div ref="yellowCorner" class="corner yellow-corner" @click="highlightCorner"></div>
-      <div ref="greenCorner" class="corner green-corner" @click="highlightCorner"></div>
+      <div ref="blueCorner" class="corner blue-corner" @click="handleClick"></div>
+      <div ref="redCorner" class="corner red-corner" @click="handleClick"></div>
+      <div ref="yellowCorner" class="corner yellow-corner" @click="handleClick"></div>
+      <div ref="greenCorner" class="corner green-corner" @click="handleClick"></div>
     </div>
     <div class="game-table">
       <h2>Round: {{ round }}</h2>
-      <button :disabled="startButtonDisabled" @click="startGame">Start</button>
+      <button :disabled="!gameOver" @click="startGame">Start</button>
     </div>
   </div>
 </template>
 
 <script>
+  const CORNERS_COUNT = 4
   export default {
     data() {
       return {
-        round: 0,
+        round: 1,
+        corners: null,
         gameKit: [],
         userKit: [],
-        delay: 500,
-        startButtonDisabled: false
+        delay: 1000,
+        gameOver: true,
+        lockedClicks: true
       }
     },
     methods: {
-      highlightCorner(event) {
-        event.target.classList.add('corner-lite')
-        setTimeout(() => event.target.classList.remove('corner-lite'), 400)
+      handleClick(event) {
+        if (this.beingPlayed) {
+          return
+        }
+        this.highlightCorner(event.target)
+        this.userKit.push(event.target)
+        this.checkUserClicks()
+      },
+      highlightCorner(corner) {
+        corner.classList.add('corner-lite')
+        corner.sound.play()
+        setTimeout(() => corner.classList.remove('corner-lite'), 300)
       },
       startGame() {
-        const randomNumber = Math.floor(Math.random() * 4)
-        this.gameKit.push(this.corners[randomNumber])
+        this.gameOver = false
+        this.addCase()
         this.playKit()
       },
+      addCase() {
+        const randomNumber = Math.floor(Math.random() * CORNERS_COUNT)
+        this.gameKit.push(this.corners[randomNumber])
+      },
       playKit() {
-        this.startButtonDisabled = true
         let delay = 0
+        this.lockedClicks = true
         this.gameKit.forEach(corner => {
-          setTimeout(() => {
-            corner.ref.click()
-            corner.sound.play()
-          }, delay)
+          setTimeout(() => this.highlightCorner(corner), delay)
           delay += this.delay
         })
-        setTimeout(() => this.startButtonDisabled = false, delay)
+        setTimeout(() => this.lockedClicks = false, delay)
+      },
+      checkUserClicks() {
+        const [gameKitString, userKitString] = this.kitsToString()
+        if (gameKitString === userKitString) {
+          this.nextRound()
+        }
+        if (!gameKitString.startsWith(userKitString)) {
+          this.finishGame()
+        }
+      },
+      kitsToString() {
+        return [
+          this.gameKit.map(corner => corner.id).join``,
+          this.userKit.map(corner => corner.id).join``
+        ]
+      },
+      nextRound() {
+        this.round += 1
+        this.addCase()
+        setTimeout(() => this.playKit(), this.delay)
+        this.userKit = []
+      },
+      finishGame() {
+        this.round = 1
+        this.gameKit = []
+        this.userKit = []
+        this.gameOver = true
       }
     },
     mounted() {
       this.corners = [
-        { ref: this.$refs.blueCorner, sound: new Audio(require('./assets/blue_sound.mp3')) },
-        { ref: this.$refs.redCorner, sound: new Audio(require('./assets/red_sound.mp3')) },
-        { ref: this.$refs.yellowCorner, sound: new Audio(require('./assets/yellow_sound.mp3')) },
-        { ref: this.$refs.greenCorner, sound: new Audio(require('./assets/green_sound.mp3')) }
+        this.$refs.blueCorner, this.$refs.redCorner, this.$refs.yellowCorner, this.$refs.greenCorner
       ]
+      this.corners.forEach((corner, index) => corner.id = index)
+      this.$refs.blueCorner.sound = new Audio(require('./assets/blue_sound.mp3'))
+      this.$refs.redCorner.sound = new Audio(require('./assets/red_sound.mp3'))
+      this.$refs.yellowCorner.sound = new Audio(require('./assets/yellow_sound.mp3'))
+      this.$refs.greenCorner.sound = new Audio(require('./assets/green_sound.mp3'))
     }
   }
 </script>

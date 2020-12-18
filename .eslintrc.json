@@ -16,8 +16,10 @@
   ],
   "rules": {
     "space-before-function-paren": "off",
-    "brace-style": "warn",
     "indent": "off",
+    "brace-style": "warn",
+    "curly": "warn",
+    "no-useless-return": "warn",
     "array-bracket-spacing": "warn",
     "prefer-const": "warn",
     "func-call-spacing": "warn",
