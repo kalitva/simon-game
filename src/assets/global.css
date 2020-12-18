@@ -2,14 +2,41 @@
   margin: 0;
   border: 0;
   box-sizing: border-box;
+  font-family: sans-serif;
+  color: #454545
 }
 
 .corner {
   width: 150px;
   height: 150px;
   cursor: pointer;
+  opacity: 0.7
 }
 
 .corner:hover {
-  border: 3px solid gray
+  border: 1px solid white
+}
+
+.corner-lite {
+  opacity: 1;
+}
+
+.blue-corner {
+  border-top-left-radius: 100%;
+  background: blue;
+}
+
+.red-corner {
+  border-top-right-radius: 100%;
+  background: red;
+}
+
+.yellow-corner {
+  border-bottom-left-radius: 100%;
+  background: yellow;
+}
+
+.green-corner {
+  border-bottom-right-radius: 100%;
+  background: green;
 }
