@@ -1,0 +1,15 @@
+* {
+  margin: 0;
+  border: 0;
+  box-sizing: border-box;
+}
+
+.corner {
+  width: 150px;
+  height: 150px;
+  cursor: pointer;
+}
+
+.corner:hover {
+  border: 3px solid gray
+}

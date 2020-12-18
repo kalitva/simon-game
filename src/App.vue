@@ -1,26 +1,34 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div class="game-board">
+    <BlueCorner />
+    <RedCorner />
+    <YellowCorner />
+    <GreenCorner />
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+  import RedCorner from './components/RedCorner'
+  import BlueCorner from './components/BlueCorner'
+  import YellowCorner from './components/YellowCorner'
+  import GreenCorner from './components/GreenCorner'
 
-export default {
-  name: 'App',
-  components: {
-    HelloWorld
+  export default {
+    components: { BlueCorner, RedCorner, YellowCorner, GreenCorner }
   }
-}
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+  #app {
+    display: flex;
+    height: 100vh;
+  }
+
+  .game-board {
+    display: flex;
+    flex-wrap: wrap;
+    width: 303px;
+    margin: auto auto;
+    gap: 3px;
+  }
 </style>
