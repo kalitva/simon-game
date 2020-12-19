@@ -90,11 +90,11 @@
       toNextRound() {
         this.round += 1
         this.addCase()
-        setTimeout(() => this.playKit(), this.delay)
+        setTimeout(() => this.playKit(), 1000)
         this.userKit = []
       },
       finishGame() {
-        this.message = `Sory, you lost after ${this.round} rounds`
+        this.message = `Sorry, you lost after ${this.round} rounds`
         this.round = 1
         this.gameKit = []
         this.userKit = []
