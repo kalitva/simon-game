@@ -10,6 +10,16 @@
     <div class="game-table">
       <h2>Round: {{ round }}</h2>
       <button :disabled="!gameOver" @click="startGame">Start</button>
+      <div v-if="gameOver" class="message">{{ message }}</div>
+      <div class="level">
+        <h3>Level:</h3>
+        <label for="easy">Easy</label>
+        <input v-model="delay" v-bind:value="1500" name="level" id="easy" type="radio" :disabled="!gameOver">
+        <label for="medium">Medium</label>
+        <input v-model="delay" v-bind:value="1000" name="level" id="medium" type="radio" :disabled="!gameOver">
+        <label for="hard">Hard</label>
+        <input v-model="delay" v-bind:value="400" name="level" id="hard" type="radio" :disabled="!gameOver">
+      </div>
     </div>
   </div>
 </template>
@@ -20,17 +30,19 @@
     data() {
       return {
         round: 1,
+        level: 'medium',
         corners: null,
         gameKit: [],
         userKit: [],
         delay: 1000,
+        message: '',
         gameOver: true,
         lockedClicks: true
       }
     },
     methods: {
       handleClick(event) {
-        if (this.beingPlayed) {
+        if (this.lockedClicks) {
           return
         }
         this.highlightCorner(event.target)
@@ -63,7 +75,7 @@
       checkUserClicks() {
         const [gameKitString, userKitString] = this.kitsToString()
         if (gameKitString === userKitString) {
-          this.nextRound()
+          this.toNextRound()
         }
         if (!gameKitString.startsWith(userKitString)) {
           this.finishGame()
@@ -75,16 +87,18 @@
           this.userKit.map(corner => corner.id).join``
         ]
       },
-      nextRound() {
+      toNextRound() {
         this.round += 1
         this.addCase()
         setTimeout(() => this.playKit(), this.delay)
         this.userKit = []
       },
       finishGame() {
+        this.message = `Sory, you lost after ${this.round} rounds`
         this.round = 1
         this.gameKit = []
         this.userKit = []
+        this.lockedClicks = true
         this.gameOver = true
       }
     },
@@ -105,12 +119,13 @@
   #app h1 {
     text-align: center;
     margin-top: 20px;
-    margin-bottom: 100px;
+    margin-bottom: 50px;
   }
 
   .game {
     display: flex;
     justify-content: center;
+    flex-wrap: wrap;
     column-gap: 90px;
   }
 
@@ -119,6 +134,10 @@
     flex-wrap: wrap;
     width: 303px;
     gap: 3px;
+  }
+
+  .game-table {
+    margin-top: 30px;
   }
 
   .game-table button {
@@ -133,5 +152,21 @@
   .game-table button[disabled] {
     background-color: lightgray;
     cursor: default;
+  }
+
+  .message {
+    margin-top: 15px;
+    color: red;
+  }
+
+  .level h3 {
+    margin-top: 50px;
+    margin-bottom: 15px;
+  }
+
+  .level input {
+    vertical-align: middle;
+    margin-left: 5px;
+    margin-right: 15px;
   }
 </style>
